@@ -1,0 +1,26 @@
+{
+  "context-menu": {
+    "atom-text-editor": [
+      {
+        "label": "Toggle linter-ui-docks",
+        "command": "linter-ui-docks:toggle"
+      }
+    ]
+  },
+  "menu": [
+    {
+      "label": "Packages",
+      "submenu": [
+        {
+          "label": "linter-ui-docks",
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "linter-ui-docks:toggle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

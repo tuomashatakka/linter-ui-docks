@@ -1,0 +1,24 @@
+{
+  "layout": {
+    "order": 1,
+    "type": "object",
+    "properties": {
+      "statusBarLocation": {
+        "description": "Set the linter UI's status bar item location",
+        "type": "string",
+        "default": "left",
+        "enum": ["disabled", "left", "right"]
+      },
+      "compact": {
+        "description": "Reduce the amount of vertical space required by listed messages",
+        "type": "boolean",
+        "default": "false"
+      },
+      "hideIfEmpty": {
+        "description": "Close the pane item as soon as no errors exist. The UI's state is restored whenever further annotations are found.",
+        "type": "boolean",
+        "default": "true"
+      }
+    }
+  }
+}

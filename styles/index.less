@@ -1,0 +1,173 @@
+// The ui-variables file is provided by base themes provided by Atom.
+//
+// See https://github.com/atom/atom-dark-ui/blob/master/styles/ui-variables.less
+// for a full listing of what's available.
+@import "ui-variables";
+
+.linter-state {
+  display: inline-block;
+}
+
+.bottom .linter-dock {
+  flex-flow:   row-reverse nowrap;
+  align-items: stretch;
+}
+
+.linter-dock {
+  height:     100%;
+  max-height: 100%;
+  flex-flow:  column nowrap;
+  display:    flex;
+  overflow:   hidden;
+
+  h3 {
+    font-size: 1.2em !important;
+    text-transform: uppercase;
+    letter-spacing: 1em;
+    text-align: center;
+    margin: 0 !important;
+    padding: 0.3em 0 0.6em;
+    font-weight: 500 !important;
+  }
+
+  .loader,
+  .badge {
+    float: right;
+    margin: 0 0.5em;
+  }
+
+  .loader {
+    display: flex;
+    flex-flow: column;
+    overflow: hidden;
+
+    .loading,
+    progress {
+      opacity: 0;
+      transition: 1000ms opacity;
+    }
+    progress.loading-success,
+    .loading-success {
+      opacity: 1;
+      transition: 100ms opacity;
+    }
+
+    .highlight {
+      display: block;
+      font-size: 0.65em;
+      white-space: nowrap;
+      padding: 4px 1em;
+      margin: 0 0 0px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-align: center;
+      opacity: 1;
+    }
+
+    article {
+      display: inline-block;
+      margin: 0;
+      line-height: inherit;
+    }
+
+  }
+}
+
+.messages {
+  list-style: none;
+  overflow-y: auto;
+  padding:    0;
+  margin:     0;
+  flex:       1 1 auto;
+
+  .message-group ul {
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-item {
+    position: relative;
+    .touchableOpacity(@background-color-highlight) }
+
+  .badge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+  }
+}
+
+.linter-message {
+
+  .touchableOpacity(@background-color-highlight);
+
+  display:    block;
+  margin:     0;
+  padding:    0.12em;
+  font-size:  0.6em;
+
+  .location {
+    font-size: 1em;
+    padding:   0 0.4em 0 0;
+    margin:    0;
+    display:   inline-block;
+    color:     inherit;
+
+    .len {
+      color: inherit;
+      padding-left: 0.5em;
+      .braces() }}
+
+  .icon::before {
+    vertical-align: middle;
+    margin-top:     -2px;
+    font-size:      1.4em;
+    display:        inline-block }
+
+  .title {
+    font-size: 1em;
+    padding:   0 0.4em 0 0;
+    display:   inline-block }
+
+  .severity {
+    font-size: 1em;
+    padding:   0 0.4em 0 0;
+    display:   inline-block }
+
+  .details {
+    font-size: 1em;
+    padding:   0;
+    margin:    0;
+    display:   block }
+
+  .compact & {
+    padding-bottom: 0.2em;
+    padding-top:    0.2em;
+    .details { display: inline-block }
+  }
+
+  &:hover .location {
+    color: inherit }
+}
+
+.touchableOpacity (@background) {
+
+  @color: #fff - @background;
+  cursor: pointer;
+  border-radius: @component-border-radius;
+  transition: .2s background-color, .3s color !important;
+
+  &:hover when (lightness(@background) > 0.5) {
+    color: @color + #333 !important }
+  &:hover when (default) {
+    color: @color - #333 !important }
+  &:hover {
+    transition: .2s background-color, .3s color !important;
+    background: fade(@background, 75%) }
+}
+
+.braces () {
+  &::before { content: "(" }
+  &::after  { content: ")" }
+}
