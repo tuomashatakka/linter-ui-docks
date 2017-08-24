@@ -18,6 +18,11 @@
         "description": "Close the pane item as soon as no errors exist. The UI's state is restored whenever further annotations are found.",
         "type": "boolean",
         "default": "true"
+      },
+      "autoOpen": {
+        "description": "Automatically toggle the linting errors panel if a new error is found and the panel is not open.",
+        "type": "boolean",
+        "default": "false"
       }
     }
   }

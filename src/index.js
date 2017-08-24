@@ -31,14 +31,12 @@ export default {
   },
 
   togglePanel () {
-    if (this.gui) {
-      if (this.gui.isVisible())
-        this.gui.open()
-      else
-        this.gui.close()
-    }
-    else
+    if (!this.gui)
       throw new ReferenceError(`Linter docks gui is not defined`)
+    if (this.gui.isVisible())
+      this.gui.open()
+    else
+      this.gui.close()
   },
 
   provideLinterUI () {

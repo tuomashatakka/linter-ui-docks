@@ -21,24 +21,44 @@ export default class LinterGUI {
     this.open()
   }
 
-  get name () { return 'Linter' }
+  get name () {
+    return 'Linter'
+  }
 
-  get item () { return this.open() }
+  get item () {
+    return this.getItem()
+  }
 
-  getTitle () { return this.name }
+  get location () {
+    return this._location ||  LinterGUI.DEFAULT_LOCATION
+  }
+
+  set location (location) {
+    this._location = location
+  }
+
+  getTitle () {
+    return this.name
+  }
 
   @autobind
   render (props) {
-    this.open()
+    if (atom.config.get('linter-ui-docks.layout.autoOpen'))
+      this.open()
     this.updateComponent(props)
   }
 
   isVisible () {
     let pn = pane(this.item)
-     return pn && pn.getActiveItem() !== this.item
+     return pn && pn.getActiveItem() === this.item
   }
 
   open () {
+    return openItem(this.getItem())
+
+  }
+
+  getItem () {
 
     let display = item =>
       this._item.element.appendChild(item)
@@ -55,10 +75,11 @@ export default class LinterGUI {
       this.subscriptions.add(remove)
 
       this._item = createItem({
-        name: this.name, location: LinterGUI.DEFAULT_LOCATION })
+        name: this.name,
+        location: this.location,
+      })
     }
-
-    return openItem(this._item)
+    return this._item
   }
 
   close () {
@@ -114,8 +135,8 @@ function createItem (options={}) {
 
 function openItem (item) {
   focusedElement = document.activeElement
-
-  if (pane(item))
+  let pn = pane(item)
+  if (pn)
     activateItem(item)
   else
     atom.workspace.open(item)
@@ -134,6 +155,9 @@ function restoreFocus () {
 
 function closeItem (item) {
   let pn = pane(item)
+  if (pn) {
+    item._lastPane = pn
+  }
   return pn ? pn.removeItem(item) : null
 }
 
@@ -148,5 +172,5 @@ function activateItem (item) {
 }
 
 function pane (item) {
-  return atom.workspace.paneForItem(item)
+  return item._lastPane || atom.workspace.paneForItem(item)
 }
