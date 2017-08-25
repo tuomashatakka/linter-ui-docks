@@ -3,9 +3,8 @@ import { render } from 'react-dom'
 import autobind from 'autobind-decorator'
 import React, { Component } from 'react'
 import prop from 'prop-types'
-import { groupMessages } from './LinterDockItemComponent'
 import Badge from './components/Badge'
-
+import { ICON_SEVERITY, groupMessages } from './constants'
 
 export class BaseComponent extends Component {
 
@@ -49,13 +48,26 @@ export default class LinterStatusBarItem extends BaseComponent {
   }
 
   render () {
+    let type   = kind => this.state[kind].length ? kind : null
+
     return <section
       onClick={() => this.props.toggle()}
       className='linter-state'>
 
-      <Badge type='error' text={this.state.error.length} />
-      <Badge type='warning' text={this.state.warning.length} />
-      <Badge type='info' text={this.state.info.length} />
+      <Badge
+        type={type('error')}
+        icon={ICON_SEVERITY.error}
+        text={this.state.error.length} />
+
+      <Badge
+        type={type('warning')}
+        icon={ICON_SEVERITY.warning}
+        text={this.state.warning.length} />
+
+      <Badge
+        type={type('info')}
+        icon={ICON_SEVERITY.info}
+        text={this.state.info.length} />
 
     </section>
   }

@@ -5,8 +5,7 @@ import prop from 'prop-types'
 import autobind from 'autobind-decorator'
 import { basename } from 'path'
 import { BaseComponent } from './LinterStatusBarItem'
-import { GROUP_BY } from './constants'
-
+import { groupMessages, iconForKey, GROUP_BY } from './constants'
 import Message from './components/Message'
 import Badge from './components/Badge'
 
@@ -19,7 +18,7 @@ const pagaqe                    = require('../package.json')
 export default class LinterDockItem extends BaseComponent {
 
   static propTypes = {
-    adapter: prop.object.isRequiredd,
+    adapter: prop.object.isRequired,
   }
 
   constructor (props) {
@@ -67,9 +66,7 @@ export default class LinterDockItem extends BaseComponent {
       this.setState({ loading, loadingState: null })
     }
 
-    setTimeout(function () {
-      removeEntry()
-    }, LOADING_OUT_DELAY)
+    setTimeout(removeEntry, LOADING_OUT_DELAY)
     markEntry('success')
   }
 
@@ -82,23 +79,32 @@ export default class LinterDockItem extends BaseComponent {
   }
 
   renderMessages (items=[]) {
-
-    const groups = groupMessages(this.state.order, items)
+    const order      = this.state.order
+    const groups     = groupMessages(order, items)
     const toggleTree = ({ currentTarget}) => toggleNext(currentTarget)
     const toggleNext = target => {
-      let parent = target.parentElement
-      let next   = target.nextElementSibling
+      let next     = target.nextElementSibling
+      let parent   = target.parentElement
       let isHidden = !next.classList.contains('hidden')
       next.classList.toggle('hidden', isHidden)
       parent.classList.toggle('collapsed', isHidden)
     }
 
+    let forGroups = fn =>
+      Object
+        .keys(groups)
+        .filter(group => groups[group].length)
+        .map(fn)
+
     let title = name =>
-      <span className='title icon icon-file-text'>
+      <span className={'title icon ' + iconForKey(name)}>
         {parseFilename(name)}
       </span>
 
-    return Object.keys(groups).map(key =>
+    let badge = name =>
+      <Badge text={groups[name].length} />
+
+    return forGroups(key =>
       <li
         key={key}
         className='message-group list-nested-item'>
@@ -106,20 +112,19 @@ export default class LinterDockItem extends BaseComponent {
         <div
           className='list-item'
           onClick={toggleTree}>
-
-          {title(key)} <Badge text={groups[key].length} />
-
+          {title(key)} {badge(key)}
         </div>
 
         <ul className='list-tree entries has-flat-children'>
-
           {groups[key].map(msg =>
-          <Message
-            linterName={msg.linterName}
-            severity={msg.severity}
-            excerpt={msg.excerpt}
-            location={msg.location}
-            key={msg.key} />)}
+            <Message
+              linterName={msg.linterName}
+              severity={msg.severity}
+              excerpt={msg.excerpt}
+              location={msg.location}
+              key={msg.key}
+            />
+          )}
         </ul>
       </li>
     )
@@ -140,16 +145,23 @@ export default class LinterDockItem extends BaseComponent {
   render () {
     let { messages, count, loadingState } = this.state
     let messageElements = this.renderMessages(messages)
-    // let loadingPaths    = this.renderLoader(loading)
     let compact = atom.config.get(CONFIG_KEY_COMPACT_LAYOUT)? ' compact' : ''
+    const orderBy = ({ target }) => this.setState({ order: target.textContent.toLowerCase() })
+    // let loadingPaths    = this.renderLoader(loading)
 
     return <article className={'tool-panel linter-dock' + compact}>
 
       <header className='panel-header padded'>
         <h3 className='align-center'>Linter</h3>
         <div className='btn-group'>
-          <button className='btn' onClick={() => this.setState({ order: 'filename' })}>Filename</button>
-          <button className='btn' onClick={() => this.setState({ order: 'severity' })}>Severity</button>
+          {Object.keys(GROUP_BY).map(key =>
+              <button
+                key={key}
+                className='btn'
+                onClick={orderBy}>
+                {key}
+              </button>
+          )}
         </div>
         <Badge text={count} />
         <div className='loader'>
@@ -164,11 +176,6 @@ export default class LinterDockItem extends BaseComponent {
       </ul>
     </article>
   }
-}
-
-
-export function groupMessages (key, messages) {
-  return GROUP_BY[key](messages)
 }
 
 

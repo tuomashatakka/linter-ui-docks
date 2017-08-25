@@ -1,10 +1,19 @@
 'use babel'
-
+import { resolveErrorCode } from './resolvers'
 
 export const GROUP_BY = {
   filename: groupMessagesByFile,
   severity: groupMessagesByType,
+  error:    groupMessagesByErrorCode,
 }
+
+const ICON_DEFAULT = 'icon-file-code'
+
+export const SEVERITY = [
+  'info',
+  'warning',
+  'error',
+]
 
 export const ICON_SEVERITY  = {
   // error:    'icon-flame',
@@ -22,10 +31,29 @@ export const MATCH_SEVERITY = {
     log: /console statement|console\.(log|info|warn|error|debug)/g,
   },
   '.py': {
-    log: /print[\s\(]/g,
+    log: /print[\s(]/g,
   },
 }
 
+export function iconForKey (key) {
+  return ICON_SEVERITY[key] || ICON_DEFAULT
+}
+
+
+export function groupMessages (key, messages) {
+  return GROUP_BY[key](messages)
+}
+
+function groupMessagesBy (key) {
+  return messages => messages.reduce((grp, message) => ({
+    ...grp,
+    [message[key]]: [ ...(grp[message[key]] || []), message ]
+  }), {})
+}
+
+const groupMessagesByError = groupMessagesBy('error')
+
+const groupMessagesBySeverity = groupMessagesBy('severity')
 
 function groupMessagesByFile (messages=[]) {
   const groups = {}
@@ -40,12 +68,15 @@ function groupMessagesByFile (messages=[]) {
   return groups
 }
 
-
 function groupMessagesByType (messages=[]) {
-  const groups = {}
+  const groups = SEVERITY.reduce((f, c) => ({ ...f, [c]: []}), {})
+  return Object.assign(groups, groupMessagesBySeverity(messages))
+}
 
-  for (let message of messages) {
-    groups[message.severity] = [ ...(groups[message.severity] || []), message ]
+function groupMessagesByErrorCode (messages=[]) {
+  const resolveError = message => {
+    message.error = message.errorCode || resolveErrorCode(message)
+    return message
   }
-  return groups
+  return groupMessagesByError(messages.map(resolveError))
 }

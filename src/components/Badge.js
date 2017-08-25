@@ -3,16 +3,21 @@
 import React from 'react'
 import prop from 'prop-types'
 
-const Badge = ({ text=null, type=null }) => {
+const Badge = ({ text=null, icon=null, type=null }) => {
 
   Badge.propTypes = {
-    text: prop.string,
+    text: prop.oneOfType([prop.string, prop.number]),
+    icon: prop.string,
     type: prop.string,
   }
 
-  return <span className={`label badge${type ? ' text-' + type : ''}`}>
-    {text}
-  </span>
+  let className = `label badge${type ? ' badge-' + type : ''}` + (icon ? ' icon ' + icon : '')
+
+  return (
+    <span className={className}>
+      {text}
+    </span>
+  )
 }
 
 
