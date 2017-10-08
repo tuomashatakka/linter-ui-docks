@@ -3,8 +3,8 @@ import { render } from 'react-dom'
 import autobind from 'autobind-decorator'
 import React, { Component } from 'react'
 import prop from 'prop-types'
-import Badge from './components/Badge'
-import { ICON_SEVERITY, groupMessages } from './constants'
+import Badge from '../components/Badge'
+import { ICON_SEVERITY, groupMessages } from '../constants'
 
 export class BaseComponent extends Component {
 

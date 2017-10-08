@@ -2,8 +2,8 @@
 
 import { CompositeDisposable, Disposable } from 'atom'
 import LinterGUI from './LinterGUI'
-import LinterGUIView from './LinterGUIView'
-import LinterStatusBarItem from './LinterStatusBarItem'
+import LinterGUIView from './views/LinterGUIView'
+import LinterStatusBarItem from './views/LinterStatusBarItem'
 
 
 const CONFIG_KEY_STATUS_BAR_LOCATION = 'linter-ui-docks.layout.statusBarLocation'

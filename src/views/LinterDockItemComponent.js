@@ -5,14 +5,14 @@ import prop from 'prop-types'
 import autobind from 'autobind-decorator'
 import { basename } from 'path'
 import { BaseComponent } from './LinterStatusBarItem'
-import { groupMessages, iconForKey, GROUP_BY } from './constants'
-import Message from './components/Message'
-import Badge from './components/Badge'
+import { groupMessages, iconForKey, GROUP_BY } from '../constants'
+import Message from '../components/Message'
+import Badge from '../components/Badge'
 
 const CONFIG_KEY_COMPACT_LAYOUT = 'linter-ui-docks.layout.compact'
 const LOADING_OUT_DELAY         = 2000
 
-const pagaqe                    = require('../package.json')
+const pagaqe                    = require('../../package.json')
 
 
 export default class LinterDockItem extends BaseComponent {
