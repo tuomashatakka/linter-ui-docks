@@ -1,6 +1,6 @@
 'use babel'
 
-import Component from './LinterDockItemComponent'
+import Component from './views/LinterDockItemComponent'
 import autobind from 'autobind-decorator'
 import { CompositeDisposable, Disposable, Emitter } from 'atom'
 
@@ -9,7 +9,9 @@ const FOCUS_DELAY = 150
 
 export default class LinterGUI {
 
-  static DEFAULT_LOCATION = 'right'
+  static get DEFAULT_LOCATION () {
+    return atom.config.get('linter-ui-docks.layout.panelDefaultLocation')
+  }
 
   constructor () {
     this.changes       = {}

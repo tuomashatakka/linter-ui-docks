@@ -2,8 +2,8 @@
 
 import { CompositeDisposable, Disposable } from 'atom'
 import LinterGUI from './LinterGUI'
-import LinterGUIView from './LinterGUIView'
-import LinterStatusBarItem from './LinterStatusBarItem'
+import LinterGUIView from './views/LinterGUIView'
+import LinterStatusBarItem from './views/LinterStatusBarItem'
 
 
 const CONFIG_KEY_STATUS_BAR_LOCATION = 'linter-ui-docks.layout.statusBarLocation'
@@ -19,9 +19,12 @@ export default {
     this.togglePanel   = this.togglePanel.bind(this)
     this.subscriptions = new CompositeDisposable()
 
-    this.subscriptions.add(registerOpener(LinterGUI))
-    this.subscriptions.add(registerViewProvider(LinterGUI, LinterGUIView))
-    this.subscriptions.add(registerCommands(this))
+    this.subscriptions.add(
+      registerOpener(LinterGUI),
+      registerViewProvider(LinterGUI, LinterGUIView),
+      registerCommands(this),
+      observeConfig(this)
+    )
   },
 
   deactivate () {
@@ -47,22 +50,40 @@ export default {
 
   async consumeStatusbar (bar) {
     let location = atom.config.get(CONFIG_KEY_STATUS_BAR_LOCATION)
-    if (location === 'disabled')
-      return
 
     let item = await LinterStatusBarItem.create({
       adapter: this.gui,
       toggle:  this.togglePanel.bind(this)
     })
 
-    if (location === 'right')
-      bar.addRightTile({ item })
-    else
-      bar.addLeftTile({ item })
-
+    boundSetStatusbarLocation = setLocationForStatusbarItem.bind(bar, item)
+    boundSetStatusbarLocation(location)
     this.subscriptions.add(new Disposable(() => item.remove()))
   },
+}
 
+let boundSetStatusbarLocation
+
+function setLocationForStatusbarItem (item, location) {
+  if (location === 'disabled') {
+    let tile =
+      this.getLeftTiles().find(o => o.item == item) ||
+      this.getRightTiles().find(o => o.item == item) ||
+      null
+    return tile.destroy()
+  }
+  else if (location === 'right')
+    this.addRightTile({ item })
+  else
+    this.addLeftTile({ item })
+}
+
+function observeConfig (main) {
+  let handler = (cf) => {
+    if (boundSetStatusbarLocation)
+      boundSetStatusbarLocation(cf.layout.statusBarLocation)
+  }
+  return atom.config.observe('linter-ui-docks', handler)
 }
 
 

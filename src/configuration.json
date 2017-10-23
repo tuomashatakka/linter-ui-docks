@@ -3,11 +3,18 @@
     "order": 1,
     "type": "object",
     "properties": {
+      "panelDefaultLocation": {
+        "title": "Panel location",
+        "description": "Default location into which to open the panel",
+        "type": "string",
+        "default": "right",
+        "enum": [ "bottom", "left", "right" ]
+      },
       "statusBarLocation": {
-        "description": "Set the linter UI's status bar item location",
+        "description": "Set the location for the status bar error display",
         "type": "string",
         "default": "left",
-        "enum": ["disabled", "left", "right"]
+        "enum": [ "disabled", "left", "right" ]
       },
       "compact": {
         "description": "Reduce the amount of vertical space required by listed messages",
