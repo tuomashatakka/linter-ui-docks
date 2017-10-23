@@ -52,7 +52,7 @@ export default {
 
     let item = await LinterStatusBarItem.create({
       adapter: this.gui,
-      toggle:  this.togglePanel
+      toggle:  this.togglePanel.bind(this)
     })
 
     if (location === 'right')

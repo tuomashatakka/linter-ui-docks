@@ -26,8 +26,10 @@
     "babel-preset-react": "^6.24.1",
     "eslint": "^3.19.0",
     "eslint-plugin-react": "^7.3.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.5.4"
+    "flow-bin": "^0.55.0",
+    "prop-types": "^15.5.10",
+    "react": "^16.0.0-alpha",
+    "react-dom": "^16.0.0-alpha"
   },
   "providedServices": {
     "linter-ui": {

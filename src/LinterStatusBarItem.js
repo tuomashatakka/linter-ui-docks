@@ -35,7 +35,6 @@ export default class LinterStatusBarItem extends BaseComponent {
       info:    [],
     }
     props.adapter.onUpdate(this.linterDidUpdate)
-    props.adapter.onEnd(this.linterDidUpdate)
   }
 
   @autobind

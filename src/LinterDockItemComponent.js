@@ -5,7 +5,7 @@ import prop from 'prop-types'
 import autobind from 'autobind-decorator'
 import { basename } from 'path'
 import { BaseComponent } from './LinterStatusBarItem'
-import { groupMessages, iconForKey, GROUP_BY } from './constants'
+import { orderItems, groupMessages, iconForKey, GROUP_BY } from './constants'
 import Message from './components/Message'
 import Badge from './components/Badge'
 
@@ -29,6 +29,7 @@ export default class LinterDockItem extends BaseComponent {
     this.adapter = props.adapter
     this.state = {
       order:    'filename',
+      group:    'filename',
       count:    0,
       loading:  [],
       messages: [],
@@ -79,8 +80,7 @@ export default class LinterDockItem extends BaseComponent {
   }
 
   renderMessages (items=[]) {
-    const order      = this.state.order
-    const groups     = groupMessages(order, items)
+    const groups     = groupMessages(this.state.group, items)
     const toggleTree = ({ currentTarget}) => toggleNext(currentTarget)
     const toggleNext = target => {
       let next     = target.nextElementSibling
@@ -116,7 +116,7 @@ export default class LinterDockItem extends BaseComponent {
         </div>
 
         <ul className='list-tree entries has-flat-children'>
-          {groups[key].map(msg =>
+          {orderItems(this.state.order, groups[key]).map(msg =>
             <Message
               linterName={msg.linterName}
               severity={msg.severity}
@@ -146,23 +146,14 @@ export default class LinterDockItem extends BaseComponent {
     let { messages, count, loadingState } = this.state
     let messageElements = this.renderMessages(messages)
     let compact = atom.config.get(CONFIG_KEY_COMPACT_LAYOUT)? ' compact' : ''
+    const groupBy = ({ target }) => this.setState({ group: target.textContent.toLowerCase() })
     const orderBy = ({ target }) => this.setState({ order: target.textContent.toLowerCase() })
     // let loadingPaths    = this.renderLoader(loading)
 
-    return <article className={'tool-panel linter-dock' + compact}>
+    return <article className={'tool-panel inset-panel linter-dock' + compact}>
 
       <header className='panel-header padded'>
         <h3 className='align-center'>Linter</h3>
-        <div className='btn-group'>
-          {Object.keys(GROUP_BY).map(key =>
-              <button
-                key={key}
-                className='btn'
-                onClick={orderBy}>
-                {key}
-              </button>
-          )}
-        </div>
         <Badge text={count} />
         <div className='loader'>
           {/* {loadingPaths} */}
@@ -174,6 +165,49 @@ export default class LinterDockItem extends BaseComponent {
       <ul className='messages padded panel-body list-tree has-collapsable-children'>
         {messageElements}
       </ul>
+      <footer className='padded panel-footer align-right'>
+
+        <section className={'segment toolbar padded' + (this.state.optionsOpen ? ' open' : ' hidden')}>
+          <article className='btn-toolbar'>
+            <h4>
+              <span className='icon icon-file-submodule' />
+              <span className='title'>Group by</span>
+            </h4>
+            <div className='btn-group btn-group-sm'>
+              {Object.keys(GROUP_BY).map(key =>
+                <button
+                  key={key}
+                  className='btn'
+                  onClick={groupBy}>
+                  {key}
+                </button>
+              )}
+            </div>
+          </article>
+          <article className='btn-toolbar'>
+            <h4>
+              <span className='icon icon-list-unordered' />
+              <span className='title'>Order by</span>
+            </h4>
+            <div className='btn-group btn-group-sm'>
+              {Object.keys(GROUP_BY).map(key =>
+                <button
+                  key={key}
+                  className='btn'
+                  onClick={orderBy}>
+                  {key}
+                </button>
+              )}
+            </div>
+          </article>
+        </section>
+
+        <div className='btn btn-sm' onClick={()=>this.setState({ optionsOpen: !this.state.optionsOpen })}>
+          <span className='icon icon-gear' />
+          <span className='title'>Options</span>
+        </div>
+
+      </footer>
     </article>
   }
 }

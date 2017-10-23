@@ -20,7 +20,8 @@ const Message = ({ location, severity, linterName, excerpt }) => {
   let className = `message linter-message list-item text-${severity} linter-${linterName}`
   let iconClass = ICON_SEVERITY[type]
 
-  return <li className={className} onClick={openCallback(location)}>
+  // TODO: openCallback for linter api v1
+  return (<li className={className} onClick={location ? openCallback(location) : () => {}}>
 
     <span  className={`title icon ${iconClass}`}>{linterName}</span>
     <span className='severity'>{type}</span>
@@ -30,11 +31,12 @@ const Message = ({ location, severity, linterName, excerpt }) => {
       {excerpt}
     </output>
 
-  </li>
+  </li>)
 }
 
 
 function openCallback ({ file, position }) {
+
   return () => {
     atom.workspace
       .open(file)
@@ -58,6 +60,8 @@ function openCallback ({ file, position }) {
 
 
 function resolveType ({ severity, excerpt, location }) {
+  if (!location)
+    return severity || 'warning'
   let { file } = location
   let matchers = MATCH_SEVERITY[extname(file)] || {}
   let fn = Object.keys(matchers).map(key => [ key, matchers[key] ])
