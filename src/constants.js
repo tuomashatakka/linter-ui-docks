@@ -1,10 +1,16 @@
 'use babel'
-import { resolveErrorCode } from './resolvers'
+import { resolveErrorCode, resolveFilename } from './resolvers'
 
 export const GROUP_BY = {
   filename: groupMessagesByFile,
   severity: groupMessagesByType,
   error:    groupMessagesByErrorCode,
+}
+
+export const ORDER_BY = {
+  filename: sortMessagesBy(resolveFilename),
+  severity: sortMessagesBy(resolveErrorCode),
+  error:    sortMessagesBy(resolveErrorCode),
 }
 
 const ICON_DEFAULT = 'icon-file-code'
@@ -39,9 +45,25 @@ export function iconForKey (key) {
   return ICON_SEVERITY[key] || ICON_DEFAULT
 }
 
-
 export function groupMessages (key, messages) {
-  return GROUP_BY[key](messages)
+  let fn = GROUP_BY[key]
+  return fn ? fn(messages) : { all: messages }
+}
+
+export function orderItems (key, messages) {
+  return messages.sort(ORDER_BY[key])
+}
+
+function sortMessagesBy (fn) {
+  return (a, b) => {
+    let af = fn(a)
+    let bf = fn(b)
+    if (af > bf)
+      return 1
+    if (af < bf)
+      return -1
+    return 0
+  }
 }
 
 function groupMessagesBy (key) {
